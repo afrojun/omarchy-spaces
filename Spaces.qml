@@ -440,9 +440,10 @@ Panel {
 
   // ------------------------------------------------------------ app icons
 
-  property var iconIndex: ({})
-  property var pendingIconIndex: ({})
-  property var iconCache: ({})
+  // Keyed by icon names and app ids, so no prototype to collide with.
+  property var iconIndex: Object.create(null)
+  property var pendingIconIndex: Object.create(null)
+  property var iconCache: Object.create(null)
   property int iconRevision: 0
 
   function findDesktopEntry(appId) {
@@ -491,7 +492,7 @@ Panel {
   }
 
   function invalidateIcons() {
-    root.iconCache = ({})
+    root.iconCache = Object.create(null)
     root.iconRevision++
   }
 
@@ -515,7 +516,7 @@ Panel {
       'find /usr/share/pixmaps -maxdepth 1 \\( -name "*.svg" -o -name "*.png" \\) 2>/dev/null'
     ].join(" ")]
     stdout: SplitParser { onRead: function(line) { root.indexIconLine(line) } }
-    onStarted: root.pendingIconIndex = ({})
+    onStarted: root.pendingIconIndex = Object.create(null)
     onExited: {
       root.iconIndex = root.pendingIconIndex
       root.invalidateIcons()
@@ -747,7 +748,7 @@ Panel {
         }
         readonly property var iconData: Model.iconItems(workspace.windows, root.cfg.groupApps, root.cfg.maxIcons)
         readonly property var itemMap: {
-          var map = ({})
+          var map = Object.create(null)
           for (var i = 0; i < iconData.items.length; i++) map[iconData.items[i].key] = iconData.items[i]
           return map
         }

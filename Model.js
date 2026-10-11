@@ -181,7 +181,8 @@ function sortWindows(windows) {
 function iconItems(windows, groupApps, maxIcons) {
   var items = []
   if (groupApps) {
-    var byApp = {}
+    // No prototype: app ids such as "constructor" must not hit inherited keys.
+    var byApp = Object.create(null)
     for (var i = 0; i < windows.length; i++) {
       var w = windows[i]
       var k = appKey(w.appId) || w.address

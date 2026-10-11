@@ -53,6 +53,27 @@ test("iconItems groups same app and keeps focused address", () => {
   assert.strictEqual(r.items[0].focused, true)
 })
 
+test("iconItems groups prototype-colliding app keys and normal ids", () => {
+  const r = M.iconItems([
+    { address: "1", appId: "constructor", title: "a", focused: false },
+    { address: "2", appId: "toString", title: "b", focused: false },
+    { address: "3", appId: "__proto__", title: "c", focused: false },
+    { address: "4", appId: "foot", title: "d", focused: false },
+    { address: "5", appId: "Constructor", title: "e", focused: true },
+    { address: "6", appId: "__proto__", title: "f", focused: false }
+  ], true, 8)
+  assert.deepStrictEqual(r.items.map(i => [i.key, i.count, i.addresses]), [
+    ["constructor", 2, ["1", "5"]],
+    ["tostring", 1, ["2"]],
+    ["__proto__", 2, ["3", "6"]],
+    ["foot", 1, ["4"]]
+  ])
+  assert.strictEqual(r.items[0].address, "5")
+  assert.strictEqual(r.items[0].title, "e")
+  assert.strictEqual(r.items[0].focused, true)
+  assert.strictEqual(r.overflow, 0)
+})
+
 test("iconItems overflow never hides focused", () => {
   const ws = [1, 2, 3, 4, 5].map(i => ({ address: String(i), appId: "a" + i, title: "", focused: i === 5 }))
   const r = M.iconItems(ws, false, 3)
